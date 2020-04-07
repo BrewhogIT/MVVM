@@ -4,11 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import android.text.TextUtils;
 import android.util.Patterns;
-@Entity
+@Entity(indices = {@Index(value = {"mEmail","mPassword"},unique = true)})
 public class User extends BaseObservable {
     @PrimaryKey (autoGenerate = true)
     private int id;

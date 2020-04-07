@@ -8,6 +8,10 @@
         <variable
             name="viewModel"
             type="com.journaldev.androidmvvmbasics.viewmodels.LoginViewModel" />
+
+        <variable
+            name="adapter"
+            type="com.journaldev.androidmvvmbasics.views.UserAdapter" />
     </data>
 
 
@@ -53,6 +57,8 @@
                 android:id="@+id/user_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:adapter="@{adapter}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 />
 
         </LinearLayout>

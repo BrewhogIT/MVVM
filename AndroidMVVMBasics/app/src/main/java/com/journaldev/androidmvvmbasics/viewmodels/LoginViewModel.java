@@ -2,7 +2,9 @@ package com.journaldev.androidmvvmbasics.viewmodels;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.journaldev.androidmvvmbasics.BR;
 import com.journaldev.androidmvvmbasics.db.repository.UserRepository;
@@ -11,30 +13,40 @@ import com.journaldev.androidmvvmbasics.model.User;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class LoginViewModel extends BaseObservable {
+public class LoginViewModel extends ViewModel {
     private User user;
     private String successMessage = "Login was successful";
     private String errorMessage = "Email or Password not valid";
     private LiveData<List<User>> userLiveData;
 
-    @Bindable
-    public String toastMessage = null;
+    //@Bindable
+    public ObservableField<String> toastMessage = new ObservableField<>();
 
-    public String getToastMessage() {
-        return toastMessage;
-    }
+//    public String getToastMessage() {
+//        return toastMessage;
+//    }
 
-    public LiveData<List<User>> getUserLiveData() throws ExecutionException, InterruptedException {
+    public LiveData<List<User>> getUserLiveData() {
         if(userLiveData == null){
-            userLiveData = UserRepository.getAllUser();
+            try {
+                userLiveData = UserRepository.getAllUser();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return userLiveData;
     }
 
+    public void deleteUser(User user){
+        UserRepository.deleteUser(user);
+    }
+
     private void setToastMessage(String toastMessage) {
 
-        this.toastMessage = toastMessage;
-        notifyPropertyChanged(BR.toastMessage);
+        this.toastMessage.set(toastMessage);
+        //notifyPropertyChanged(BR.toastMessage);
     }
 
     public LoginViewModel() {
@@ -57,9 +69,12 @@ public class LoginViewModel extends BaseObservable {
     }
 
     public void onLoginClicked() {
-        if (user.isInputDataValid())
+        if (user.isInputDataValid()) {
             setToastMessage(successMessage);
+            UserRepository.insertUser(user);
+        }
         else
             setToastMessage(errorMessage);
     }
+
 }
